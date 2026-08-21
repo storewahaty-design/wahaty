@@ -1,8 +1,7 @@
 /* ===== Shared Wahaty sub-store engine ===== */
 const WHATSAPP_NUMBER = "9647760093849";
-const DELIVERY_FEE = 5000; // flat delivery cost in IQD, added at checkout
-/* Paste your Google Apps Script Web App URL here to auto-log orders to a Sheet.
-   Leave "" to skip logging (WhatsApp still works). */
+const DELIVERY_FEE = 5000;
+const CATALOG_URL = "https://script.google.com/macros/s/AKfycbz3w-dbosVxWjBcFTEyTbewmY_Ke8U7dK-HCLkdIpfFgX-d6cadoMEEPSUTfxRfK9hD6A/exec";
 const SHEET_ORDER_URL = "";
 const SOCIAL = {
   facebook:"https://www.facebook.com/profile.php?id=61592544157037",
@@ -61,12 +60,32 @@ const T = {
 
 function initStore(cfg){
   let lang="en", cart={}, payMethod="card", cardType="QI Card", activeBrand=null, openCatIdx=null;
-  const CATS=cfg.cats, BRANDS=cfg.brands, PRODUCTS=cfg.products, STORE=cfg.name, HERO=cfg.hero;
+  const CATS=cfg.cats, STORE=cfg.name, HERO=cfg.hero;
+  let PRODUCTS = (cfg.products||[]).map(p=>({
+    name:{en:p.en,ar:p.ar}, brand:p.brand, price:p.price, category:"", picture:"",
+    emoji:p.emoji, rating:p.rating, reviews:p.reviews, tag:p.tag||""
+  }));
+  let BRANDS = cfg.brands || [];
   const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
   const fmt=n=>n.toLocaleString(lang==="ar"?"ar-EG":"en-US")+" "+CURRENCY[lang];
   const stars=r=>"★".repeat(Math.round(r))+"☆".repeat(5-Math.round(r));
   const waLink=t=>`https://wa.me/${WHATSAPP_NUMBER}?text=${t}`;
   function tagText(tag){if(!tag)return"";const p={};tag.split("|").forEach(x=>{const[k,v]=x.split(":");p[k]=v;});return p[lang]||"";}
+  function pName(p){ return (p.name && (p.name[lang]||p.name.en)) || ""; }
+
+  function loadCatalog(){
+    if(!CATALOG_URL) return;
+    fetch(CATALOG_URL).then(r=>r.json()).then(rows=>{
+      const mine = rows.filter(x=> x.store===STORE.en && (x.status||"").toLowerCase()==="available");
+      if(!mine.length) return;
+      PRODUCTS = mine.map(x=>({
+        name:{en:x.name,ar:x.name}, brand:x.brand||"", price:x.price||0,
+        category:x.category||"", picture:x.picture||"", origin:x.origin||"", description:x.description||"", emoji:cfg.emoji, rating:0, reviews:0, tag:""
+      }));
+      BRANDS = [...new Set(PRODUCTS.map(p=>p.brand).filter(Boolean))];
+      renderBrands(); renderProducts($("#searchInput").value);
+    }).catch(()=>{});
+  }
 
   function renderCats(){
     $("#catGrid").innerHTML=CATS.map((c,i)=>`<div class="cat" data-cat="${i}"><div class="cat-badge">${c.emoji}</div><div class="name">${c[lang]}</div></div>`).join("");
@@ -76,13 +95,46 @@ function initStore(cfg){
     const f=filter.trim().toLowerCase();
     let list=PRODUCTS.map((p,i)=>({...p,id:i}));
     if(activeBrand) list=list.filter(p=>p.brand===activeBrand);
-    if(f) list=list.filter(p=>p.en.toLowerCase().includes(f)||p.ar.includes(filter)||p.brand.toLowerCase().includes(f));
+    if(f) list=list.filter(p=>pName(p).toLowerCase().includes(f)||pName(p).includes(filter)||(p.brand||"").toLowerCase().includes(f)||(p.category||"").toLowerCase().includes(f));
     $("#prodTitle").textContent=activeBrand?activeBrand:T[lang].prodH;
     $("#clearFilter").style.display=activeBrand?"block":"none";
-    $("#prodGrid").innerHTML=list.map(p=>{const tg=tagText(p.tag);return `<div class="card"><div class="thumb">${p.emoji}${tg?`<span class="tag">${tg}</span>`:""}</div><div class="body"><div class="brand">${p.brand}</div><div class="pname">${p[lang]}</div><div class="stars">${stars(p.rating)}<span>${p.reviews} ${T[lang].reviewsTxt}</span></div><div class="foot"><div class="price">${fmt(p.price)}</div><button class="add" data-id="${p.id}">+</button></div></div></div>`;}).join("")||`<p style="color:var(--muted)">${lang==='ar'?'لا توجد منتجات.':'No products found.'}</p>`;
+    $("#prodGrid").innerHTML=list.map(p=>{
+      const tg=tagText(p.tag);
+      const thumb = p.picture ? `<img src="${p.picture}" alt="${pName(p)}" loading="lazy" onerror="this.parentNode.textContent='${p.emoji||'🛍️'}'">` : (p.emoji||'🛍️');
+      const originLine = p.origin ? `<div class="origin">🌍 ${p.origin}</div>` : (p.reviews ? `<div class="stars">${stars(p.rating)}<span>${p.reviews} ${T[lang].reviewsTxt}</span></div>` : `<div class="origin" style="visibility:hidden">·</div>`);
+      return `<div class="card" data-view="${p.id}" style="cursor:pointer"><div class="thumb">${thumb}${tg?`<span class="tag">${tg}</span>`:""}</div><div class="body">${p.brand?`<div class="brand">${p.brand}</div>`:""}<div class="pname">${pName(p)}</div>${originLine}<div class="foot"><div class="price">${fmt(p.price)}</div><button class="add" data-id="${p.id}">+</button></div></div></div>`;
+    }).join("")||`<p style="color:var(--muted)">${lang==='ar'?'لا توجد منتجات.':'No products found.'}</p>`;
   }
   function renderSpecial(){$("#specialGrid").innerHTML=SPECIALS.map(s=>`<div class="special-card" data-special="${s.key}"><div class="sico">${s.ico}</div><h4>${s[lang].h}</h4><p>${s[lang].p}</p></div>`).join("");}
   function renderCities(){$("#coCity").innerHTML=`<option value="" disabled selected>${T[lang].cityPh}</option>`+CITIES.map(c=>`<option value="${c.en}">${c[lang]}</option>`).join("");}
+
+  function ensurePDModal(){
+    if($("#pdModal")) return;
+    const el=document.createElement("aside");
+    el.className="modal pd-modal"; el.id="pdModal";
+    document.body.appendChild(el);
+  }
+  function openProduct(id){
+    ensurePDModal();
+    const p=PRODUCTS[id]; if(!p) return;
+    const big = p.picture ? `<img src="${p.picture}" alt="${pName(p)}" onerror="this.parentNode.innerHTML='${p.emoji||'🛍️'}'">` : (p.emoji||'🛍️');
+    const m=$("#pdModal");
+    m.innerHTML=`
+      <button class="close-x pd-close" id="pdClose">✕</button>
+      <div class="pd-img">${big}</div>
+      <div class="pd-info">
+        ${p.brand?`<div class="pd-brand">${p.brand}</div>`:""}
+        <h3 class="pd-name">${pName(p)}</h3>
+        ${p.origin?`<div class="pd-origin">🌍 ${p.origin}</div>`:""}
+        ${p.description?`<p class="pd-desc">${p.description}</p>`:""}
+        <div class="pd-foot">
+          <div class="pd-price">${fmt(p.price)}</div>
+          <button class="btn-primary pd-add" data-id="${id}" style="width:auto;padding:12px 22px">${lang==='ar'?'أضف إلى السلة':'Add to cart'}</button>
+        </div>
+      </div>`;
+    m.classList.add("open"); openOverlay();
+    $("#pdClose").onclick=()=>{ m.classList.remove("open"); if(!$("#drawer").classList.contains("open")&&!$("#checkoutModal").classList.contains("open")) $("#overlay").classList.remove("open"); };
+  }
 
   function applyLang(){
     const t=T[lang];
@@ -105,12 +157,12 @@ function initStore(cfg){
     const ids=Object.keys(cart).filter(id=>cart[id]>0),body=$("#cartBody"),foot=$("#cartFoot");
     if(!ids.length){body.innerHTML=`<div class="empty"><div class="big">🛒</div>${T[lang].emptyTxt}</div>`;foot.style.display="none";return;}
     foot.style.display="block";
-    body.innerHTML=ids.map(id=>{const p=PRODUCTS[id];return `<div class="line"><div class="li-thumb">${p.emoji}</div><div class="li-info"><div class="li-name">${p[lang]}</div><div class="li-price">${fmt(p.price)}</div><div class="qty"><button data-dec="${id}">−</button><span>${cart[id]}</span><button data-inc="${id}">+</button></div></div><button class="li-remove" data-rem="${id}">✕</button></div>`;}).join("");
+    body.innerHTML=ids.map(id=>{const p=PRODUCTS[id];const thumb=p.picture?`<img src="${p.picture}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:11px" onerror="this.parentNode.textContent='${p.emoji||'🛍️'}'">`:(p.emoji||'🛍️');return `<div class="line"><div class="li-thumb">${thumb}</div><div class="li-info"><div class="li-name">${pName(p)}</div><div class="li-price">${fmt(p.price)}</div><div class="qty"><button data-dec="${id}">−</button><span>${cart[id]}</span><button data-inc="${id}">+</button></div></div><button class="li-remove" data-rem="${id}">✕</button></div>`;}).join("");
     $("#cartTotal").textContent=fmt(cartTotal());
   }
   function showToast(m){const el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),1700);}
   function openOverlay(){$("#overlay").classList.add("open");}
-  function closeAll(){$("#drawer").classList.remove("open");$("#checkoutModal").classList.remove("open");$("#overlay").classList.remove("open");}
+  function closeAll(){$("#drawer").classList.remove("open");$("#checkoutModal").classList.remove("open");const pd=$("#pdModal");if(pd)pd.classList.remove("open");$("#overlay").classList.remove("open");}
   function openCart(){$("#drawer").classList.add("open");openOverlay();}
   function grandTotal(){return cartTotal()+DELIVERY_FEE;}
   function openCheckout(){
@@ -134,7 +186,7 @@ function initStore(cfg){
     L.push((isAr?"المدينة: ":"City: ")+$("#coCity").value);
     L.push((isAr?"العنوان: ":"Address: ")+$("#coAddr").value.trim());L.push("");
     L.push(isAr?"— المنتجات —":"— Items —");
-    ids.forEach(id=>{const p=PRODUCTS[id];L.push(`• ${p.en} ×${cart[id]} — ${(p.price*cart[id]).toLocaleString("en-US")} IQD`);});L.push("");
+    ids.forEach(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.en||p.name.ar))||"";L.push(`• ${nm} ×${cart[id]} — ${(p.price*cart[id]).toLocaleString("en-US")} IQD`);});L.push("");
     L.push((isAr?"المجموع الفرعي: ":"Subtotal: ")+cartTotal().toLocaleString("en-US")+" IQD");
     L.push((isAr?"التوصيل: ":"Delivery: ")+DELIVERY_FEE.toLocaleString("en-US")+" IQD");
     L.push((isAr?"المجموع: ":"Total: ")+grandTotal().toLocaleString("en-US")+" IQD");
@@ -143,41 +195,26 @@ function initStore(cfg){
   }
   function buildSpecial(key){const isAr=lang==="ar",s=SPECIALS.find(x=>x.key===key);
     return encodeURIComponent([(isAr?"✨ طلب خاص — ":"✨ Special request — ")+STORE[lang],"",(isAr?"النوع: ":"Type: ")+s[lang].h,"",isAr?"مرحباً، أود الاستفسار عن هذا الطلب:":"Hello, I'd like to ask about this request:"].join("\n"));}
-  /* Log the order to Google Sheets (fire-and-forget; never blocks WhatsApp) */
   function logOrder(){
-    if(!SHEET_ORDER_URL) return;
+    if(! SHEET_ORDER_URL) return;
     const ids=Object.keys(cart).filter(id=>cart[id]>0);
-    const items=ids.map(id=>{const p=PRODUCTS[id];return `${p.en} x${cart[id]}`;}).join(" | ");
-    const data={
-      store:STORE.en,
-      date:new Date().toISOString(),
-      name:$("#coFirst").value.trim()+" "+$("#coLast").value.trim(),
-      phone:$("#coPhone").value.trim(),
-      city:$("#coCity").value,
-      address:$("#coAddr").value.trim(),
-      items:items,
-      subtotal:cartTotal(),
-      delivery:DELIVERY_FEE,
-      total:grandTotal(),
-      payment:payMethod==="card"?("Card - "+cardType):"On arrival"
-    };
-    try{
-      fetch(SHEET_ORDER_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
-    }catch(e){/* ignore — order still goes through WhatsApp */}
+    const items=ids.map(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.en||p.name.ar))||"";return `${nm} x${cart[id]}`;}).join(" | ");
+    const data={store:STORE.en,date:new Date().toISOString(),name:$("#coFirst").value.trim()+" "+$("#coLast").value.trim(),phone:$("#coPhone").value.trim(),city:$("#coCity").value,address:$("#coAddr").value.trim(),items:items,subtotal:cartTotal(),delivery:DELIVERY_FEE,total:grandTotal(),payment:payMethod==="card"?("Card - "+cardType):"On arrival"};
+    try{ fetch(SHEET_ORDER_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)}); }catch(e){}
   }
 
-  /* apply store colors + emoji */
   const r=document.documentElement.style;
   r.setProperty("--brand",cfg.color.brand);r.setProperty("--brand-dark",cfg.color.dark);r.setProperty("--brand-light",cfg.color.light);
   $$(".dot").forEach(el=>el.textContent=cfg.emoji);
 
   document.addEventListener("click",e=>{
     const t=e.target;
-    const add=t.closest("[data-id]");if(add){addToCart(add.dataset.id);return;}
+    const add=t.closest("[data-id]");if(add){addToCart(add.dataset.id);if(add.classList.contains("pd-add")){const pd=$("#pdModal");if(pd)pd.classList.remove("open");}return;}
     const inc=t.closest("[data-inc]");if(inc){cart[inc.dataset.inc]++;updateCount();renderCart();return;}
     const dec=t.closest("[data-dec]");if(dec){const id=dec.dataset.dec;cart[id]=Math.max(0,cart[id]-1);if(!cart[id])delete cart[id];updateCount();renderCart();return;}
     const rem=t.closest("[data-rem]");if(rem){delete cart[rem.dataset.rem];updateCount();renderCart();return;}
-    const cat=t.closest("[data-cat]");if(cat){const c=CATS[+cat.dataset.cat];const hit=PRODUCTS.some(p=>p.en.toLowerCase().includes(c.en.toLowerCase()));activeBrand=null;$("#searchInput").value=hit?c.en:"";renderProducts(hit?c.en:"");document.querySelector("#products").scrollIntoView({behavior:"smooth"});return;}
+    const view=t.closest("[data-view]");if(view){openProduct(+view.dataset.view);return;}
+    const cat=t.closest("[data-cat]");if(cat){const c=CATS[+cat.dataset.cat];activeBrand=null;const byCat=PRODUCTS.some(p=>(p.category||"").toLowerCase()===c.en.toLowerCase());const term=byCat?c.en:(PRODUCTS.some(p=>((p.name&&p.name.en)||"").toLowerCase().includes(c.en.toLowerCase()))?c.en:"");$("#searchInput").value=term;renderProducts(term);document.querySelector("#products").scrollIntoView({behavior:"smooth"});return;}
     const br=t.closest("[data-brand]");if(br){activeBrand=br.dataset.brand;$("#searchInput").value="";renderProducts();document.querySelector("#products").scrollIntoView({behavior:"smooth"});return;}
     const sp=t.closest("[data-special]");if(sp){window.open(waLink(buildSpecial(sp.dataset.special)),"_blank");return;}
     const nav=t.closest("[data-nav]");if(nav){e.preventDefault();const m={categories:"#categories",brands:"#brands",special:"#special"};document.querySelector(m[nav.dataset.nav]).scrollIntoView({behavior:"smooth"});$$(".mainnav a[data-nav]").forEach(a=>a.classList.toggle("active",a===nav));return;}
@@ -194,5 +231,5 @@ function initStore(cfg){
   ["soWa"].forEach(id=>$("#"+id).href=`https://wa.me/${WHATSAPP_NUMBER}`);
   $("#waFloat").href=`https://wa.me/${WHATSAPP_NUMBER}`;$("#footWa").href=`https://wa.me/${WHATSAPP_NUMBER}`;
   $("#cardSubs").style.display="block";
-  applyLang();updateCount();
+  applyLang();updateCount();loadCatalog();
 }
