@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23eaf4ec'/%3E%3Cg fill='%23f4a259'%3E%3Crect x='46.5' y='16' width='7' height='15' rx='3.5'/%3E%3Crect x='29' y='22' width='7' height='14' rx='3.5' transform='rotate(-32 32.5 29)'/%3E%3Crect x='64' y='22' width='7' height='14' rx='3.5' transform='rotate(32 67.5 29)'/%3E%3Crect x='17' y='34' width='7' height='13' rx='3.5' transform='rotate(-58 20.5 40.5)'/%3E%3Crect x='76' y='34' width='7' height='13' rx='3.5' transform='rotate(58 79.5 40.5)'/%3E%3C/g%3E%3Cpath d='M32 60 a18 18 0 0 1 36 0 Z' fill='%23f4a259'/%3E%3Cpath d='M12 74 Q50 48 88 74' stroke='%232c5f34' stroke-width='7' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<title>Wahaty Care</title>
+<style>
+@font-face{font-family:"Tajawal";font-style:normal;font-weight:400;font-display:swap;src:url("../../fonts/Tajawal-Regular.woff2") format("woff2");}
+@font-face{font-family:"Tajawal";font-style:normal;font-weight:700;font-display:swap;src:url("../../fonts/Tajawal-Bold.woff2") format("woff2");}
+@font-face{font-family:"Tajawal";font-style:normal;font-weight:800;font-display:swap;src:url("../../fonts/Tajawal-ExtraBold.woff2") format("woff2");}
+:root{
+  --brand:#4a9cc4;--brand-dark:#357a9e;--brand-light:#e7f3f9;
+  --amber:#f4a259;--ink:#1f2a24;--muted:#6b7c72;--line:#e4ebe6;
+  --bg:#f7fafb;--card:#fff;--shadow:0 2px 12px rgba(31,42,36,.06);--shadow-lg:0 12px 32px rgba(31,42,36,.12);
+  --radius:16px;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+html[dir="rtl"]{--sans:"Tajawal","Damascus","Segoe UI","SF Arabic","Geeza Pro",-apple-system,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:64px}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.hidden{display:none!important}
+.topbar{background:var(--brand-dark);color:#fff;font-size:13px}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;height:38px;gap:16px}
+.back-link{display:flex;align-items:center;gap:6px;font-weight:600;font-size:12.5px;opacity:.95}
+.back-link:hover{opacity:1;text-decoration:underline}
+.lang-toggle{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);border-radius:999px;padding:4px 12px;font-weight:600;font-size:12.5px;color:#fff}
+.lang-toggle:hover{background:rgba(255,255,255,.26)}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+.header-main{display:flex;align-items:center;gap:20px;height:72px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:21px;color:var(--brand-dark);white-space:nowrap;cursor:pointer}
+.logo .dot{width:30px;height:30px;border-radius:9px;background:var(--brand);display:grid;place-items:center;font-size:17px}
+.search{flex:1;display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:0 6px 0 18px;height:44px}
+html[dir="rtl"] .search{padding:0 18px 0 6px}
+.search:focus-within{border-color:var(--brand)}
+.search input{flex:1;border:none;background:none;outline:none;font-size:15px;color:var(--ink)}
+.search button{width:34px;height:34px;background:var(--brand);border-radius:50%;display:grid;place-items:center;color:#fff}
+.cart-btn{position:relative;width:46px;height:46px;border-radius:12px;background:var(--brand-light);display:grid;place-items:center;font-size:20px;color:var(--brand-dark);flex-shrink:0}
+.cart-count{position:absolute;top:-6px;right:-6px;background:var(--amber);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:999px;display:grid;place-items:center;padding:0 5px}
+html[dir="rtl"] .cart-count{right:auto;left:-6px}
+.mainnav{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:72px;z-index:39}
+.mainnav .wrap{display:flex;gap:6px;height:48px;align-items:center;overflow-x:auto}
+.mainnav a{padding:8px 14px;border-radius:9px;font-size:14px;font-weight:600;white-space:nowrap;cursor:pointer}
+.mainnav a:hover,.mainnav a.active{background:var(--brand-light);color:var(--brand-dark)}
+.hero{background:linear-gradient(120deg,var(--brand),var(--brand-dark));color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;top:-70px;right:-50px;width:260px;height:260px;border-radius:50%;border:2px dashed rgba(255,255,255,.2)}
+html[dir="rtl"] .hero::after{right:auto;left:-50px}
+.hero .wrap{padding:40px 20px;position:relative;z-index:1}
+.hero h1{font-size:clamp(24px,4vw,38px);font-weight:800;margin-bottom:8px}
+.hero p{font-size:16px;opacity:.94;max-width:480px}
+section{padding:34px 0}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px}
+.sec-head h2{font-size:21px;font-weight:800}
+.sec-head .link{color:var(--brand);font-weight:600;font-size:14px;cursor:pointer}
+.cats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+@media(max-width:900px){.cats{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:560px){.cats{grid-template-columns:repeat(3,1fr)}}
+.cat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 10px;text-align:center;transition:transform .18s,box-shadow .2s;cursor:pointer}
+.cat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.cat .cat-badge{width:60px;height:60px;margin:0 auto 10px;border-radius:16px;background:var(--brand-light);display:grid;place-items:center;font-size:30px}
+.cat .name{font-size:13px;font-weight:700;line-height:1.3}
+.cat .subcount{font-size:11px;color:var(--muted);margin-top:3px}
+.subwrap{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.subwrap .subhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.subwrap .subhead h3{font-size:16px;font-weight:800;color:var(--brand-dark)}
+.subchips{display:flex;flex-wrap:wrap;gap:9px}
+.subchip{background:var(--brand-light);color:var(--brand-dark);font-size:13px;font-weight:600;padding:7px 14px;border-radius:999px;cursor:pointer}
+.subchip:hover{background:#d5e9f2}
+.brands{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+@media(max-width:900px){.brands{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:560px){.brands{grid-template-columns:repeat(3,1fr)}}
+.brand-tile{background:var(--card);border:1px solid var(--line);border-radius:14px;height:80px;display:grid;place-items:center;font-weight:800;font-size:15px;color:var(--brand-dark);text-align:center;padding:8px;cursor:pointer;transition:transform .18s,box-shadow .2s}
+.brand-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:transform .18s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.card .thumb{background:#fff;height:150px;display:grid;place-items:center;font-size:58px;position:relative;overflow:hidden}
+.card .thumb img{width:100%;height:100%;object-fit:contain;padding:10px;display:block}
+.card .tag{position:absolute;top:10px;left:10px;background:var(--amber);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+html[dir="rtl"] .card .tag{left:auto;right:10px}
+.card .body{padding:14px;display:flex;flex-direction:column;flex:1}
+.card .brand{font-size:11.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.card .pname{font-size:14.5px;font-weight:600;line-height:1.35;margin-bottom:6px;min-height:38px}
+.card .stars{color:var(--amber);font-size:12.5px;margin-bottom:10px}
+.card .stars span{color:var(--muted);margin-inline-start:4px}
+.card .origin{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.card .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card .price{font-size:17px;font-weight:800;color:var(--brand-dark)}
+.add{background:var(--brand);color:#fff;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:20px;transition:background .18s,transform .12s}
+.add:hover{background:var(--brand-dark)}.add:active{transform:scale(.9)}
+.special{background:var(--brand-light)}
+.special .wrap{padding:36px 20px}
+.special-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:820px){.special-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.special-grid{grid-template-columns:1fr}}
+.special-card{background:#fff;border-radius:var(--radius);padding:22px 18px;text-align:center;border:1px solid var(--line);transition:transform .18s,box-shadow .2s;cursor:pointer}
+.special-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.special-card .sico{font-size:34px;margin-bottom:10px}
+.special-card h4{font-size:15px;font-weight:800;margin-bottom:5px}
+.special-card p{font-size:12.5px;color:var(--muted);line-height:1.4}
+.info{background:var(--card);border-top:1px solid var(--line)}
+.info .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:30px 20px}
+@media(max-width:760px){.info .wrap{grid-template-columns:repeat(2,1fr)}}
+.info-item{display:flex;gap:12px;align-items:flex-start}
+.info-item .ico{font-size:26px}
+.info-item h4{font-size:14.5px;font-weight:700;margin-bottom:2px}
+.info-item p{font-size:12.5px;color:var(--muted);line-height:1.4}
+footer{background:var(--brand-dark);color:#fff;padding:40px 0 28px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1.1fr;gap:32px;margin-bottom:28px}
+@media(max-width:820px){.foot-grid{grid-template-columns:1fr 1fr;gap:26px}}
+@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
+.foot-grid h5{font-size:15px;font-weight:700;margin-bottom:12px}
+.foot-grid p,.foot-grid a{font-size:13.5px;opacity:.85;line-height:1.9;display:block}
+.foot-grid a:hover{opacity:1;text-decoration:underline}
+.foot-logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:20px;margin-bottom:12px}
+.foot-logo .dot{width:28px;height:28px;border-radius:8px;background:var(--brand);display:grid;place-items:center;font-size:15px}
+.socials{display:flex;gap:10px;margin-top:10px}
+.socials a{width:42px;height:42px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:transform .15s}
+.socials a:hover{transform:translateY(-3px)}
+.socials .so-fb{color:#1877F2}.socials .so-ig{color:#E1306C}.socials .so-tk{color:#010101}.socials .so-wa{color:#25D366}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.15);padding-top:18px;font-size:12.5px;opacity:.75;text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(31,42,36,.5);opacity:0;visibility:hidden;transition:.25s;z-index:60}
+.overlay.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;height:100%;width:400px;max-width:92vw;background:#fff;z-index:70;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.18)}
+html[dir="rtl"] .drawer{right:auto;left:0;transform:translateX(-100%)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid var(--line)}
+.drawer-head h3{font-size:18px;font-weight:800}
+.close-x{width:34px;height:34px;border-radius:9px;background:var(--bg);display:grid;place-items:center;font-size:18px;color:var(--muted)}
+.drawer-body{flex:1;overflow-y:auto;padding:16px 20px}
+.empty{text-align:center;color:var(--muted);padding:50px 0;font-size:14px}
+.empty .big{font-size:46px;margin-bottom:10px}
+.line{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.line .li-thumb{width:54px;height:54px;background:var(--brand-light);border-radius:11px;display:grid;place-items:center;font-size:26px;flex-shrink:0}
+.line .li-info{flex:1;min-width:0}
+.line .li-name{font-size:13.5px;font-weight:600;line-height:1.3;margin-bottom:2px}
+.line .li-price{font-size:12.5px;color:var(--muted)}
+.qty{display:flex;align-items:center;gap:8px;margin-top:6px}
+.qty button{width:24px;height:24px;border-radius:7px;background:var(--brand-light);color:var(--brand-dark);font-size:15px;font-weight:700;display:grid;place-items:center}
+.qty span{font-size:13.5px;font-weight:700;min-width:18px;text-align:center}
+.li-remove{color:var(--muted);font-size:12px;align-self:flex-start;margin-inline-start:auto}
+.drawer-foot{padding:18px 20px;border-top:1px solid var(--line);background:var(--bg)}
+.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:15px}
+.total-row .amt{font-size:20px;font-weight:800;color:var(--brand-dark)}
+.btn-primary{width:100%;background:var(--brand);color:#fff;font-weight:700;font-size:15px;padding:14px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:9px}
+.btn-primary:hover{background:var(--brand-dark)}
+.wa-checkout{width:100%;background:#25D366;color:#fff;font-weight:700;font-size:15px;padding:14px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:9px}
+.wa-checkout:hover{background:#1da851}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);background:#fff;z-index:70;width:440px;max-width:92vw;max-height:88vh;overflow-y:auto;border-radius:20px;opacity:0;visibility:hidden;transition:.22s;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.modal.open{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 22px 0}
+.modal-head h3{font-size:19px;font-weight:800}
+.modal-body{padding:16px 22px 24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.field label .req{color:#c0392b}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:12px 14px;font-size:14.5px;font-family:inherit;background:var(--bg);outline:none;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand)}
+.field textarea{resize:vertical;min-height:64px}
+.field .err{color:#c0392b;font-size:12px;margin-top:5px;display:none}
+.field.invalid input,.field.invalid select,.field.invalid textarea{border-color:#c0392b}
+.field.invalid .err{display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pay-methods{margin-bottom:16px}
+.pay-methods .plabel{font-size:13px;font-weight:700;margin-bottom:10px}
+.pay-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;margin-bottom:9px;cursor:pointer}
+.pay-opt.sel{border-color:var(--brand);background:var(--brand-light)}
+.pay-opt .radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);flex-shrink:0;position:relative}
+.pay-opt.sel .radio{border-color:var(--brand)}
+.pay-opt.sel .radio::after{content:"";position:absolute;inset:3px;background:var(--brand);border-radius:50%}
+.pay-opt .ptxt b{font-size:14px;display:block}
+.pay-opt .ptxt small{font-size:11.5px;color:var(--muted)}
+.card-subs{margin:2px 0 6px;padding-inline-start:30px}
+.card-sub{display:flex;align-items:center;gap:9px;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:7px;cursor:pointer;font-size:13px;font-weight:600}
+.card-sub.sel{border-color:var(--brand)}
+.card-sub .cdot{width:14px;height:14px;border-radius:50%;border:2px solid var(--muted);position:relative}
+.card-sub.sel .cdot{border-color:var(--brand)}
+.card-sub.sel .cdot::after{content:"";position:absolute;inset:2px;background:var(--brand);border-radius:50%}
+.wa-float{position:fixed;bottom:70px;right:22px;width:56px;height:56px;background:#25D366;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#fff;box-shadow:0 6px 20px rgba(37,211,102,.45);z-index:50}
+html[dir="rtl"] .wa-float{right:auto;left:22px}
+.wa-float:hover{transform:scale(1.08)}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;font-size:13.5px;font-weight:600;opacity:0;visibility:hidden;transition:.25s;z-index:80}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+/* product detail popup */
+.pd-modal{padding:0;overflow:hidden}
+.pd-close{position:absolute;top:12px;right:12px;z-index:2;background:rgba(255,255,255,.9)}
+html[dir="rtl"] .pd-close{right:auto;left:12px}
+.pd-img{height:250px;background:#fff;display:grid;place-items:center;font-size:90px;overflow:hidden;border-bottom:1px solid var(--line)}
+.pd-img img{width:100%;height:100%;object-fit:contain;padding:16px;display:block}
+.pd-info{padding:20px 22px 26px}
+.pd-brand{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.pd-name{font-size:21px;font-weight:800;line-height:1.2;margin-bottom:8px}
+.pd-origin{font-size:13.5px;color:var(--muted);margin-bottom:12px}
+.pd-desc{font-size:14.5px;color:var(--ink);line-height:1.7;margin-bottom:18px;white-space:pre-line}
+.pd-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.pd-price{font-size:22px;font-weight:800;color:var(--brand-dark)}
+/* ===== Mobile ===== */
+@media(max-width:640px){
+  .header-main{flex-wrap:wrap;height:auto;padding:10px 0;gap:10px}
+  .logo{font-size:18px;order:1}
+  .cart-btn{order:2;margin-inline-start:auto}
+  .search{order:3;flex-basis:100%;height:42px}
+  .mainnav{top:0;position:static}
+  .mainnav .wrap{gap:4px}
+  .mainnav a{padding:8px 12px;font-size:13.5px}
+  header{position:static}
+  .hero .wrap{padding:26px 20px}
+  .sec-head h2{font-size:19px}
+  section{padding:26px 0}
+  .drawer{width:100%;max-width:100%}
+  .modal{width:100%;max-width:100%;height:100%;max-height:100%;border-radius:0;top:0;left:0;transform:none}
+  .modal.open{transform:none}
+  .modal-body{padding:16px 18px 40px}
+  .two-col{grid-template-columns:1fr}
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .brands{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <a class="back-link" href="../../index.html"><span id="backArrow">←</span> <span data-i="backTxt">Back to Wahaty</span></a>
+  <button class="lang-toggle" id="langBtn"><span>🌐</span><span id="langLabel">العربية</span></button>
+</div></div>
+<header><div class="wrap header-main">
+  <a class="logo" href="../../index.html"><span class="dot">🧴</span><span data-i="brand">Wahaty Care</span></a>
+  <div class="search"><input type="text" id="searchInput" placeholder="Search products…" data-ph="searchph"><button aria-label="search">🔍</button></div>
+  <button class="cart-btn" id="cartBtn" aria-label="cart">🛒<span class="cart-count" id="cartCount">0</span></button>
+</div></header>
+<nav class="mainnav"><div class="wrap">
+  <a data-nav="categories" class="active" data-i="navCats">Categories</a>
+  <a data-nav="brands" data-i="navBrands">Brands</a>
+  <a data-nav="special" data-i="navSpecial">Special Orders</a>
+</div></nav>
+
+<div class="hero"><div class="wrap"><h1 data-i="heroH">Wahaty Care</h1><p data-i="heroP">Everyday personal & family care essentials, delivered across Iraq.</p></div></div>
+
+<section id="categories"><div class="wrap">
+  <div class="sec-head"><h2 data-i="catsH">Shop by category</h2></div>
+  <div class="cats" id="catGrid"></div>
+  <div class="subwrap hidden" id="subwrap"><div class="subhead"><h3 id="subTitle"></h3><button id="subClose">✕</button></div><div class="subchips" id="subChips"></div></div>
+</div></section>
+
+<section id="brands" style="padding-top:0"><div class="wrap">
+  <div class="sec-head"><h2 data-i="brandsH">Shop by brand</h2></div>
+  <div class="brands" id="brandGrid"></div>
+</div></section>
+
+<section id="products" style="padding-top:0"><div class="wrap">
+  <div class="sec-head"><h2 id="prodTitle" data-i="prodH">Popular products</h2><a class="link" id="clearFilter" data-i="viewall">View all</a></div>
+  <div class="grid" id="prodGrid"></div>
+</div></section>
+
+<div class="special" id="special"><div class="wrap">
+  <div class="sec-head"><h2 data-i="specialH">Special orders & requests</h2></div>
+  <div class="special-grid" id="specialGrid"></div>
+</div></div>
+
+<div class="info"><div class="wrap">
+  <div class="info-item"><span class="ico">💳</span><div><h4 data-i="i1h">Card to card</h4><p data-i="i1p">QI Card, FIB or Zain Cash transfer before shipping.</p></div></div>
+  <div class="info-item"><span class="ico">💵</span><div><h4 data-i="i2h">On arrival</h4><p data-i="i2p">Pay when your order arrives at your door.</p></div></div>
+  <div class="info-item"><span class="ico">📱</span><div><h4 data-i="i3h">WhatsApp ordering</h4><p data-i="i3p">Confirm your order in seconds over WhatsApp Business.</p></div></div>
+  <div class="info-item"><span class="ico">🚚</span><div><h4 data-i="i4h">Nationwide delivery</h4><p data-i="i4p">We ship to every province in Iraq.</p></div></div>
+</div></div>
+
+<footer><div class="wrap"><div class="foot-grid">
+  <div>
+    <div class="foot-logo"><span class="dot">🧴</span><span data-i="brand">Wahaty Care</span></div>
+    <p data-i="footAbout">Part of the Wahaty oasis — genuine products delivered across Iraq.</p>
+    <div class="socials">
+      <a id="soFb" class="so-fb" href="#" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a>
+      <a id="soIg" class="so-ig" href="#" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.12 1.38C1.36 2.67.95 3.34.63 4.13.33 4.9.13 5.77.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.92.31.79.72 1.46 1.38 2.12.66.66 1.33 1.07 2.12 1.38.77.3 1.64.5 2.92.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.92-.56.79-.31 1.46-.72 2.12-1.38.66-.66 1.07-1.33 1.38-2.12.3-.77.5-1.64.56-2.92.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.92-.31-.79-.72-1.46-1.38-2.12C21.33 1.36 20.66.95 19.87.63 19.1.33 18.23.13 16.95.07 15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg></a>
+      <a id="soTk" class="so-tk" href="#" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .58.05.85.13V9.4a6.33 6.33 0 0 0-.85-.06 6.34 6.34 0 1 0 6.34 6.34V8.19a8.16 8.16 0 0 0 4.77 1.52V6.26a4.85 4.85 0 0 1-1-.05v.48z"/></svg></a>
+      <a id="soWa" class="so-wa" href="#" target="_blank" aria-label="WhatsApp"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.5 14.38c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35zM12.05 21.5h-.01a9.4 9.4 0 0 1-4.79-1.31l-.34-.2-3.56.93.95-3.47-.22-.36a9.4 9.4 0 0 1-1.44-5.02c0-5.19 4.23-9.42 9.43-9.42 2.52 0 4.88.98 6.66 2.76a9.36 9.36 0 0 1 2.76 6.67c0 5.19-4.23 9.42-9.43 9.42zM20.4 3.6A11.36 11.36 0 0 0 12.05.14C5.8.14.73 5.21.73 11.45c0 2 .52 3.95 1.52 5.67L.63 23.14l6.16-1.61a11.34 11.34 0 0 0 5.26 1.34h.01c6.24 0 11.32-5.07 11.32-11.31 0-3.03-1.18-5.87-3.32-8.01z"/></svg></a>
+    </div>
+  </div>
+  <div><h5 data-i="footShopH">Shop</h5><a data-nav="categories" data-i="navCats">Categories</a><a data-nav="brands" data-i="navBrands">Brands</a><a data-nav="special" data-i="navSpecial">Special Orders</a></div>
+  <div><h5 data-i="footHelpH">Contact</h5><a id="footWa" href="#" data-i="footWaTxt">WhatsApp: +964 776 009 3849</a><p data-i="footHours">Sat–Thu · 9am – 9pm</p><a href="../../index.html" data-i="backTxt">Back to Wahaty</a></div>
+</div><div class="foot-bottom">© 2026 Wahaty. <span data-i="rights">All rights reserved.</span></div></div></footer>
+
+<a class="wa-float" id="waFloat" href="#" aria-label="WhatsApp">💬</a>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head"><h3 data-i="cartH">Your cart</h3><button class="close-x" id="closeCart">✕</button></div>
+  <div class="drawer-body" id="cartBody"></div>
+  <div class="drawer-foot" id="cartFoot" style="display:none">
+    <div class="total-row"><span data-i="totalL">Total</span><span class="amt" id="cartTotal">0 IQD</span></div>
+    <button class="btn-primary" id="toCheckoutBtn"><span data-i="checkoutTxt">Proceed to checkout</span> →</button>
+  </div>
+</aside>
+<aside class="modal" id="checkoutModal">
+  <div class="modal-head"><h3 data-i="coH">Checkout</h3><button class="close-x" id="closeCheckout">✕</button></div>
+  <div class="modal-body">
+    <div class="two-col">
+      <div class="field" id="f-first"><label data-i="coFirst">First name <span class="req">*</span></label><input id="coFirst"><div class="err" data-i="coReq">Required</div></div>
+      <div class="field" id="f-last"><label data-i="coLast">Family name <span class="req">*</span></label><input id="coLast"><div class="err" data-i="coReq">Required</div></div>
+    </div>
+    <div class="field" id="f-phone"><label data-i="coPhone">Phone number <span class="req">*</span></label><input id="coPhone" type="tel" inputmode="tel" placeholder="0770 000 0000"><div class="err" data-i="coReq">Required</div></div>
+    <div class="field" id="f-city"><label data-i="coCity">City / Province <span class="req">*</span></label><select id="coCity"></select><div class="err" data-i="coReq">Required</div></div>
+    <div class="field" id="f-addr"><label data-i="coAddr">Full address <span class="req">*</span></label><textarea id="coAddr"></textarea><div class="err" data-i="coReq">Required</div></div>
+    <div class="pay-methods"><div class="plabel" data-i="payH">Payment method</div>
+      <div class="pay-opt sel" data-pay="card"><span class="radio"></span><div class="ptxt"><b data-i="payCardB">Card to card</b><small data-i="payCardS">QI Card · FIB · Zain Cash</small></div></div>
+      <div class="card-subs" id="cardSubs">
+        <div class="card-sub sel" data-cardsub="QI Card"><span class="cdot"></span>QI Card</div>
+        <div class="card-sub" data-cardsub="FIB"><span class="cdot"></span>FIB</div>
+        <div class="card-sub" data-cardsub="Zain Cash"><span class="cdot"></span>Zain Cash</div>
+      </div>
+      <div class="pay-opt" data-pay="cod"><span class="radio"></span><div class="ptxt"><b data-i="payCodB">On arrival</b><small data-i="payCodS">Pay when it arrives</small></div></div>
+    </div>
+    <div class="total-row"><span data-i="totalL">Total</span><span class="amt" id="coTotal">0 IQD</span></div>
+    <button class="wa-checkout" id="placeOrderBtn"><span style="font-size:19px">💬</span><span data-i="placeOrder">Send order on WhatsApp</span></button>
+  </div>
+</aside>
+<div class="toast" id="toast"></div>
+
+<script src="../../store.js"></script>
+<script>
+initStore({
+  key:"kids",
+  color:{brand:"#e0a05a",dark:"#b97c38",light:"#f7ecdd"},
+  emoji:"🍼",
+  name:{en:"Wahaty Kids", ar:"واحتي كيدز"},
+  hero:{en:"Everything for babies and children, delivered across Iraq.", ar:"كل ما يحتاجه الرضّع والأطفال، توصيل لكل العراق."},
+  cats:[
+    {emoji:"🧷", en:"Diapers & Wipes", ar:"الحفاضات والمناديل", subs:[]},
+    {emoji:"🛁", en:"Baby Bath & Skin", ar:"استحمام وبشرة الطفل", subs:[]},
+    {emoji:"🍶", en:"Feeding & Bottles", ar:"الرضاعة والقناني", subs:[]},
+    {emoji:"🤱", en:"Moms Gadget", ar:"مستلزمات الأمهات", subs:[]},
+    {emoji:"🦷", en:"Oral Care", ar:"العناية بالفم", subs:[]},
+    {emoji:"🧸", en:"Toys", ar:"الألعاب", subs:[]},
+    {emoji:"🛠️", en:"Kids Tools", ar:"أدوات الأطفال", subs:[]},
+    {emoji:"🛡️", en:"Safety", ar:"السلامة", subs:[]}
+  ],
+  brands:["Aptamil","Nestlé","Pampers","Huggies","Johnson's","Chicco","Avent","Nan","Sudocrem","Mustela"],
+  products:[
+    {emoji:"🍼", brand:"Aptamil", en:"Formula Stage 1, 800g", ar:"حليب أبتاميل مرحلة ١، ٨٠٠غ", price:24000, rating:4.7, reviews:210, tag:"en:Best seller|ar:الأكثر مبيعاً"},
+    {emoji:"🍼", brand:"Nan", en:"Optipro Stage 2, 800g", ar:"نان أوبتي برو مرحلة ٢", price:23000, rating:4.7, reviews:165, tag:""},
+    {emoji:"🧷", brand:"Pampers", en:"Diapers Size 3 (60pcs)", ar:"حفاضات بامبرز مقاس ٣", price:15000, rating:4.8, reviews:389, tag:"en:Best seller|ar:الأكثر مبيعاً"},
+    {emoji:"🧻", brand:"Huggies", en:"Baby Wipes (3x56)", ar:"مناديل هاجيز (٣×٥٦)", price:8000, rating:4.7, reviews:142, tag:""},
+    {emoji:"🛁", brand:"Johnson's", en:"Baby Shampoo 300ml", ar:"شامبو جونسون ٣٠٠مل", price:4000, rating:4.9, reviews:256, tag:""},
+    {emoji:"🥣", brand:"Nestlé", en:"Cerelac Wheat 400g", ar:"سيريلاك قمح ٤٠٠غ", price:6500, rating:4.6, reviews:120, tag:""},
+    {emoji:"🍶", brand:"Avent", en:"Anti-Colic Bottle 260ml", ar:"قنينة أفنت ٢٦٠مل", price:12000, rating:4.8, reviews:98, tag:"en:New|ar:جديد"},
+    {emoji:"💊", brand:"Nestlé", en:"Kids Multivitamin Syrup", ar:"شراب فيتامينات للأطفال", price:9000, rating:4.6, reviews:74, tag:""},
+    {emoji:"🧴", brand:"Sudocrem", en:"Rash Cream 125g", ar:"كريم سودو للتسلخات", price:7000, rating:4.9, reviews:180, tag:""},
+    {emoji:"🤱", brand:"Avent", en:"Electric Breast Pump", ar:"مضخة حليب كهربائية", price:65000, rating:4.7, reviews:52, tag:""},
+    {emoji:"🧸", brand:"Chicco", en:"Activity Soft Toy", ar:"لعبة نشاطية طرية", price:11000, rating:4.7, reviews:66, tag:""},
+    {emoji:"🩺", brand:"Chicco", en:"Digital Thermometer", ar:"ميزان حرارة رقمي", price:8500, rating:4.6, reviews:90, tag:""}
+  ]
+});
+</script>
+</body>
+</html>
