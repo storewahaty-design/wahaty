@@ -182,6 +182,27 @@ html[dir="rtl"] .wa-float{right:auto;left:22px}
 .wa-float:hover{transform:scale(1.08)}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;font-size:13.5px;font-weight:600;opacity:0;visibility:hidden;transition:.25s;z-index:80}
 .toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+/* ===== Mobile ===== */
+@media(max-width:640px){
+  .header-main{flex-wrap:wrap;height:auto;padding:10px 0;gap:10px}
+  .logo{font-size:18px;order:1}
+  .cart-btn{order:2;margin-inline-start:auto}
+  .search{order:3;flex-basis:100%;height:42px}
+  .mainnav{top:0;position:static}
+  .mainnav .wrap{gap:4px}
+  .mainnav a{padding:8px 12px;font-size:13.5px}
+  header{position:static}
+  .hero .wrap{padding:26px 20px}
+  .sec-head h2{font-size:19px}
+  section{padding:26px 0}
+  .drawer{width:100%;max-width:100%}
+  .modal{width:100%;max-width:100%;height:100%;max-height:100%;border-radius:0;top:0;left:0;transform:none}
+  .modal.open{transform:none}
+  .modal-body{padding:16px 18px 40px}
+  .two-col{grid-template-columns:1fr}
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .brands{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
