@@ -68,7 +68,8 @@ html[dir="rtl"] .store::after{right:auto;left:-40px}
 .store.store-dark::after{background:rgba(0,0,0,.06)}
 .store.store-dark .store-emoji{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.10)}
 .store.store-dark .store-cta{background:var(--ink);color:#fff}
-.store-emoji{width:96px;height:96px;flex-shrink:0;background:rgba(255,255,255,.18);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.28);border-radius:22px;display:grid;place-items:center;font-size:52px}
+.store-emoji{width:96px;height:96px;flex-shrink:0;background:rgba(255,255,255,.18);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.28);border-radius:22px;display:grid;place-items:center;font-size:52px;overflow:hidden}
+.store-emoji img{width:100%;height:100%;object-fit:cover;display:block}
 .store-body{flex:1;min-width:0}
 .store-name{font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.5px;line-height:1.1;margin-bottom:5px}
 .store-tag{font-size:14.5px;opacity:.95;line-height:1.5;max-width:520px}
@@ -325,29 +326,27 @@ const SOCIAL = {
   tiktok:"https://www.tiktok.com/@wahatystoreiraq"
 };
 
-/* ===== The 7 Wahaty stores (each is a subdomain) =====
-   Put each store's real subdomain URL in 'url' when the sub-sites are live,
-   e.g. url:"https://care.wahaty.com". Leave "#" for now. */
+/* ===== The 7 Wahaty stores ===== */
 const STORES = [
-  {emoji:"🧴", url:"stores/care/index.html", sbg:"linear-gradient(120deg,#7cc4e0,#4a9cc4)",
+  {emoji:"🧴", img:"images/care.png", url:"stores/care/index.html", sbg:"linear-gradient(120deg,#7cc4e0,#4a9cc4)",
     en:{name:"Wahaty Care",       tag:"Everyday personal & family care essentials."},
     ar:{name:"واحتي كير",          tag:"مستلزمات العناية اليومية لك ولعائلتك."}},
-  {emoji:"💄", url:"stores/beauty/index.html", sbg:"linear-gradient(120deg,#d16f92,#a8546f)",
+  {emoji:"💄", img:"images/beauty.png", url:"stores/beauty/index.html", sbg:"linear-gradient(120deg,#d16f92,#a8546f)",
     en:{name:"Wahaty Beauty",     tag:"Makeup and beauty products you'll love."},
     ar:{name:"واحتي بيوتي",        tag:"منتجات المكياج والجمال التي تحبينها."}},
-  {emoji:"🍼", url:"stores/kids/index.html", sbg:"linear-gradient(120deg,#f3e3d0,#e7d3ba)", dark:true,
+  {emoji:"🍼", img:"images/kids.png", url:"stores/kids/index.html", sbg:"linear-gradient(120deg,#f3e3d0,#e7d3ba)", dark:true,
     en:{name:"Wahaty Kids",       tag:"Everything for babies and children."},
     ar:{name:"واحتي كيدز",         tag:"كل ما يحتاجه الرضّع والأطفال."}},
-  {emoji:"🐾", url:"stores/pets/index.html", sbg:"linear-gradient(120deg,#8a6d4b,#5f4a30)",
+  {emoji:"🐾", img:"images/pets.png", url:"stores/pets/index.html", sbg:"linear-gradient(120deg,#8a6d4b,#5f4a30)",
     en:{name:"Wahaty Pets",       tag:"Food, care and supplies for your companions."},
     ar:{name:"واحتي بيتس",         tag:"طعام وعناية ومستلزمات حيواناتك الأليفة."}},
-  {emoji:"💊", url:"stores/nutrition/index.html", sbg:"linear-gradient(120deg,#f6c945,#eaa81f)", dark:true,
+  {emoji:"💊", img:"images/nutrition.png", url:"stores/nutrition/index.html", sbg:"linear-gradient(120deg,#f6c945,#eaa81f)", dark:true,
     en:{name:"Wahaty Nutrition",  tag:"Medical supplements, vitamins & wellness."},
     ar:{name:"واحتي نيوتريشن",      tag:"المكملات الطبية والفيتامينات والعافية."}},
-  {emoji:"💪", url:"stores/sports/index.html", sbg:"linear-gradient(120deg,#2b2b2b,#111111)",
+  {emoji:"💪", img:"images/sports.png", url:"stores/sports/index.html", sbg:"linear-gradient(120deg,#2b2b2b,#111111)",
     en:{name:"Wahaty Sports",     tag:"Protein, pre-workout and sports supplements."},
     ar:{name:"واحتي سبورتس",        tag:"البروتين ومكملات ما قبل التمرين والرياضة."}},
-  {emoji:"🌿", url:"stores/organic/index.html", sbg:"linear-gradient(120deg,#6a9a3a,#3a5f24)",
+  {emoji:"🌿", img:"images/organic.png", url:"stores/organic/index.html", sbg:"linear-gradient(120deg,#6a9a3a,#3a5f24)",
     en:{name:"Wahaty Organic",    tag:"100% organic & natural products."},
     ar:{name:"واحتي أورجانيك",      tag:"منتجات عضوية وطبيعية 100%."}}
 ];
@@ -426,7 +425,7 @@ const $$ = s => document.querySelectorAll(s);
 function renderStores(){
   $("#storeList").innerHTML = STORES.map((s,i)=>`
     <div class="store${s.dark?' store-dark':''}" data-store="${i}" style="--sbg:${s.sbg}">
-      <div class="store-emoji">${s.emoji}</div>
+      <div class="store-emoji">${s.img?`<img src="${s.img}" alt="${s[lang].name}" onerror="this.parentNode.textContent='${s.emoji}'">`:s.emoji}</div>
       <div class="store-body">
         <div class="store-name">${s[lang].name}</div>
         <div class="store-tag">${s[lang].tag}</div>
