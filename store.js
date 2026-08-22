@@ -1,12 +1,8 @@
 /* ===== Shared Wahaty sub-store engine ===== */
 const WHATSAPP_NUMBER = "9647760093849";
-const DELIVERY_FEE = 5000; // flat delivery cost in IQD, added at checkout
-/* Paste your Google Apps Script catalog URL here to load products from the Sheet.
-   Leave "" to use the built-in demo products in each store's config. */
+const DELIVERY_FEE = 5000;
 const CATALOG_URL = "https://script.google.com/macros/s/AKfycbz3w-dbosVxWjBcFTEyTbewmY_Ke8U7dK-HCLkdIpfFgX-d6cadoMEEPSUTfxRfK9hD6A/exec";
-/* Optional: paste your order-logging Apps Script URL to save orders to a Sheet.
-   Leave "" to skip (WhatsApp still works). */
-const SHEET_ORDER_URL = "";
+const SHEET_ORDER_URL = "https://script.google.com/macros/s/AKfycbwJZW9sO4sA44zleHDMf8GQvLzMLEW-_8tsrr-sz0go2_-hiOZBJRM3OGkEh_Z4AzCl/exec";
 const SOCIAL = {
   facebook:"https://www.facebook.com/profile.php?id=61592544157037",
   instagram:"https://www.instagram.com/wahatystore/",
@@ -65,8 +61,6 @@ const T = {
 function initStore(cfg){
   let lang="en", cart={}, payMethod="card", cardType="QI Card", activeBrand=null, activeCategory=null, openCatIdx=null;
   const CATS=cfg.cats, STORE=cfg.name, HERO=cfg.hero;
-  /* When a catalog URL is set, start empty (show Loading) so demo products never flash.
-     Without a catalog URL, fall back to the built-in demo products. */
   let loading = !!CATALOG_URL;
   let PRODUCTS = CATALOG_URL ? [] : (cfg.products||[]).map(p=>({
     name:{en:p.en,ar:p.ar}, brand:p.brand, price:p.price, category:"", picture:"",
@@ -80,7 +74,6 @@ function initStore(cfg){
   function tagText(tag){if(!tag)return"";const p={};tag.split("|").forEach(x=>{const[k,v]=x.split(":");p[k]=v;});return p[lang]||"";}
   function pName(p){ return (p.name && (p.name[lang]||p.name.en)) || ""; }
 
-  /* Load products live from the Google Sheet catalog */
   function loadCatalog(){
     if(!CATALOG_URL) return;
     fetch(CATALOG_URL).then(r=>r.json()).then(rows=>{
@@ -105,7 +98,6 @@ function initStore(cfg){
     if(activeCategory) list=list.filter(p=>(p.category||"").toLowerCase()===activeCategory.toLowerCase());
     if(activeBrand) list=list.filter(p=>p.brand===activeBrand);
     if(f) list=list.filter(p=>pName(p).toLowerCase().includes(f)||pName(p).includes(filter)||(p.brand||"").toLowerCase().includes(f));
-    /* title reflects the active filter */
     let title=T[lang].prodH;
     if(activeCategory){const c=CATS.find(x=>x.en===activeCategory); title=c?c[lang]:activeCategory;}
     else if(activeBrand){title=activeBrand;}
@@ -122,7 +114,6 @@ function initStore(cfg){
   function renderSpecial(){$("#specialGrid").innerHTML=SPECIALS.map(s=>`<div class="special-card" data-special="${s.key}"><div class="sico">${s.ico}</div><h4>${s[lang].h}</h4><p>${s[lang].p}</p></div>`).join("");}
   function renderCities(){$("#coCity").innerHTML=`<option value="" disabled selected>${T[lang].cityPh}</option>`+CITIES.map(c=>`<option value="${c.en}">${c[lang]}</option>`).join("");}
 
-  /* Product detail popup */
   function ensurePDModal(){
     if($("#pdModal")) return;
     const el=document.createElement("aside");
@@ -210,30 +201,25 @@ function initStore(cfg){
   }
   function buildSpecial(key){const isAr=lang==="ar",s=SPECIALS.find(x=>x.key===key);
     return encodeURIComponent([(isAr?"✨ طلب خاص — ":"✨ Special request — ")+STORE[lang],"",(isAr?"النوع: ":"Type: ")+s[lang].h,"",isAr?"مرحباً، أود الاستفسار عن هذا الطلب:":"Hello, I'd like to ask about this request:"].join("\n"));}
-  /* Log the order to Google Sheets (fire-and-forget; never blocks WhatsApp) */
   function logOrder(){
     if(!SHEET_ORDER_URL) return;
     const ids=Object.keys(cart).filter(id=>cart[id]>0);
-    const items=ids.map(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.en||p.name.ar))||"";return `${nm} x${cart[id]}`;}).join(" | ");
+    const items=ids.map(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.en||p.name.ar))||"";return {name:nm, qty:cart[id], unit:p.price, total:p.price*cart[id]};});
     const data={
       store:STORE.en,
-      date:new Date().toISOString(),
+      date:new Date().toLocaleString("en-GB"),
       name:$("#coFirst").value.trim()+" "+$("#coLast").value.trim(),
       phone:$("#coPhone").value.trim(),
       city:$("#coCity").value,
       address:$("#coAddr").value.trim(),
       items:items,
-      subtotal:cartTotal(),
-      delivery:DELIVERY_FEE,
-      total:grandTotal(),
-      payment:payMethod==="card"?("Card - "+cardType):"On arrival"
+      payment:payMethod==="card"?"electronic":"cash on delivery"
     };
     try{
       fetch(SHEET_ORDER_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
-    }catch(e){/* ignore — order still goes through WhatsApp */}
+    }catch(e){}
   }
 
-  /* apply store colors + emoji */
   const r=document.documentElement.style;
   r.setProperty("--brand",cfg.color.brand);r.setProperty("--brand-dark",cfg.color.dark);r.setProperty("--brand-light",cfg.color.light);
   $$(".dot").forEach(el=>el.textContent=cfg.emoji);
