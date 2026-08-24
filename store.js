@@ -184,30 +184,30 @@ function initStore(cfg){
   }
   function validate(){let ok=true;[["f-first","coFirst"],["f-last","coLast"],["f-phone","coPhone"],["f-city","coCity"],["f-addr","coAddr"]].forEach(([f,inp])=>{const bad=!$("#"+inp).value.trim();$("#"+f).classList.toggle("invalid",bad);if(bad)ok=false;});return ok;}
   function buildOrder(){
-    const isAr=lang==="ar",ids=Object.keys(cart).filter(id=>cart[id]>0);
-    const pay=payMethod==="card"?(isAr?"دفع إلكتروني":"Electronic payment"):(isAr?"الدفع عند الاستلام":"Cash on delivery");
-    const now=new Date().toLocaleString(isAr?"ar-IQ":"en-GB");
+    const ids=Object.keys(cart).filter(id=>cart[id]>0);
+    const pay=payMethod==="card"?"دفع إلكتروني":"الدفع عند الاستلام";
+    const now=new Date().toLocaleString("en-GB");
     let L=[];
-    L.push(isAr?"🧾 إيصال طلب — واحتي":"🧾 Order receipt — Wahaty");
-    L.push((isAr?"المتجر: ":"Store: ")+STORE[lang]);
+    L.push("🧾 إيصال طلب — واحتي");
+    L.push("المتجر: "+STORE.ar);
     L.push("——————————————");
-    L.push((isAr?"👤 الاسم: ":"👤 Name: ")+$("#coFirst").value.trim()+" "+$("#coLast").value.trim());
-    L.push((isAr?"📞 الهاتف: ":"📞 Phone: ")+$("#coPhone").value.trim());
-    L.push((isAr?"🏙️ المدينة: ":"🏙️ City: ")+$("#coCity").value);
-    L.push((isAr?"📅 التاريخ: ":"📅 Date: ")+now);
+    L.push("👤 الاسم: "+$("#coFirst").value.trim()+" "+$("#coLast").value.trim());
+    L.push("📞 الهاتف: "+$("#coPhone").value.trim());
+    L.push("🏙️ المدينة: "+$("#coCity").value);
+    L.push("📅 التاريخ: "+now);
     L.push("——————————————");
-    L.push(isAr?"🛍️ المنتجات:":"🛍️ Products:");
-    ids.forEach(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.en||p.name.ar))||"";
-      L.push(`• ${nm}`);
-      L.push(`   ${cart[id]} × ${p.price.toLocaleString("en-US")} = ${(p.price*cart[id]).toLocaleString("en-US")} IQD`);
+    L.push("🛍️ المنتجات:");
+    ids.forEach(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.ar||p.name.en))||"";
+      L.push("• "+nm);
+      L.push("   "+cart[id]+" × "+p.price.toLocaleString("en-US")+" = "+(p.price*cart[id]).toLocaleString("en-US")+" دينار");
     });
     L.push("——————————————");
-    L.push((isAr?"التوصيل: ":"Delivery: ")+DELIVERY_FEE.toLocaleString("en-US")+" IQD");
-    L.push((isAr?"💰 المجموع الكلي: ":"💰 Total: ")+grandTotal().toLocaleString("en-US")+" IQD");
-    L.push((isAr?"💳 الدفع: ":"💳 Payment: ")+pay);
+    L.push("التوصيل: "+DELIVERY_FEE.toLocaleString("en-US")+" دينار");
+    L.push("💰 المجموع الكلي: "+grandTotal().toLocaleString("en-US")+" دينار");
+    L.push("💳 الدفع: "+pay);
     L.push("——————————————");
     L.push("اتمام الطلب ✅");
-    L.push(isAr?"سنتواصل معك قريباً لتأكيد طلبك 🌿":"We'll contact you shortly to confirm your order 🌿");
+    L.push("سنتواصل معك قريباً لتأكيد طلبك 🌿");
     return encodeURIComponent(L.join("\n"));
   }
   function buildSpecial(key){const isAr=lang==="ar",s=SPECIALS.find(x=>x.key===key);
