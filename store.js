@@ -185,18 +185,29 @@ function initStore(cfg){
   function validate(){let ok=true;[["f-first","coFirst"],["f-last","coLast"],["f-phone","coPhone"],["f-city","coCity"],["f-addr","coAddr"]].forEach(([f,inp])=>{const bad=!$("#"+inp).value.trim();$("#"+f).classList.toggle("invalid",bad);if(bad)ok=false;});return ok;}
   function buildOrder(){
     const isAr=lang==="ar",ids=Object.keys(cart).filter(id=>cart[id]>0);
-    const pay=payMethod==="card"?(T[lang].payCardB+" — "+cardType):T[lang].payCodB;
-    let L=[];L.push((isAr?"🛒 طلب جديد من ":"🛒 New order from ")+STORE[lang]);L.push("");
-    L.push((isAr?"الاسم: ":"Name: ")+$("#coFirst").value.trim()+" "+$("#coLast").value.trim());
-    L.push((isAr?"الهاتف: ":"Phone: ")+$("#coPhone").value.trim());
-    L.push((isAr?"المدينة: ":"City: ")+$("#coCity").value);
-    L.push((isAr?"العنوان: ":"Address: ")+$("#coAddr").value.trim());L.push("");
-    L.push(isAr?"— المنتجات —":"— Items —");
-    ids.forEach(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.en||p.name.ar))||"";L.push(`• ${nm} ×${cart[id]} — ${(p.price*cart[id]).toLocaleString("en-US")} IQD`);});L.push("");
-    L.push((isAr?"المجموع الفرعي: ":"Subtotal: ")+cartTotal().toLocaleString("en-US")+" IQD");
+    const pay=payMethod==="card"?(isAr?"دفع إلكتروني":"Electronic payment"):(isAr?"الدفع عند الاستلام":"Cash on delivery");
+    const now=new Date().toLocaleString(isAr?"ar-IQ":"en-GB");
+    let L=[];
+    L.push(isAr?"🧾 إيصال طلب — واحتي":"🧾 Order receipt — Wahaty");
+    L.push((isAr?"المتجر: ":"Store: ")+STORE[lang]);
+    L.push("——————————————");
+    L.push((isAr?"👤 الاسم: ":"👤 Name: ")+$("#coFirst").value.trim()+" "+$("#coLast").value.trim());
+    L.push((isAr?"📞 الهاتف: ":"📞 Phone: ")+$("#coPhone").value.trim());
+    L.push((isAr?"🏙️ المدينة: ":"🏙️ City: ")+$("#coCity").value);
+    L.push((isAr?"📅 التاريخ: ":"📅 Date: ")+now);
+    L.push("——————————————");
+    L.push(isAr?"🛍️ المنتجات:":"🛍️ Products:");
+    ids.forEach(id=>{const p=PRODUCTS[id];const nm=(p.name&&(p.name.en||p.name.ar))||"";
+      L.push(`• ${nm}`);
+      L.push(`   ${cart[id]} × ${p.price.toLocaleString("en-US")} = ${(p.price*cart[id]).toLocaleString("en-US")} IQD`);
+    });
+    L.push("——————————————");
     L.push((isAr?"التوصيل: ":"Delivery: ")+DELIVERY_FEE.toLocaleString("en-US")+" IQD");
-    L.push((isAr?"المجموع: ":"Total: ")+grandTotal().toLocaleString("en-US")+" IQD");
-    L.push((isAr?"طريقة الدفع: ":"Payment: ")+pay);
+    L.push((isAr?"💰 المجموع الكلي: ":"💰 Total: ")+grandTotal().toLocaleString("en-US")+" IQD");
+    L.push((isAr?"💳 الدفع: ":"💳 Payment: ")+pay);
+    L.push("——————————————");
+    L.push("اتمام الطلب ✅");
+    L.push(isAr?"سنتواصل معك قريباً لتأكيد طلبك 🌿":"We'll contact you shortly to confirm your order 🌿");
     return encodeURIComponent(L.join("\n"));
   }
   function buildSpecial(key){const isAr=lang==="ar",s=SPECIALS.find(x=>x.key===key);
