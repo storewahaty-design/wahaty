@@ -205,6 +205,13 @@ function initStore(cfg){
     L.push("التوصيل: "+DELIVERY_FEE.toLocaleString("en-US")+" دينار");
     L.push("💰 المجموع الكلي: "+grandTotal().toLocaleString("en-US")+" دينار");
     L.push("💳 الدفع: "+pay);
+        if(payMethod==="card"){
+      L.push("——————————————");
+      L.push("🏦 أرقام الحسابات للتحويل:");
+      L.push("• 8690474062");
+      L.push("• 910164496069");
+      L.push("يرجى التحويل ثم إرسال صورة الإيصال 🌿");
+    }
     L.push("——————————————");
     L.push("اتمام الطلب ✅");
     L.push("سنتواصل معك قريباً لتأكيد طلبك 🌿");
